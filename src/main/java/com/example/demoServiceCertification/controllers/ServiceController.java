@@ -1,4 +1,4 @@
-package com.example.demoServiceSertification.controllers;
+package com.example.demoServiceCertification.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +10,6 @@ public class ServiceController {
     @GetMapping("/{serviceId}")
     public String getService(String serviceId)
     {
-        return "Service fousdsnd";
+        return "Service found";
     }
 }
