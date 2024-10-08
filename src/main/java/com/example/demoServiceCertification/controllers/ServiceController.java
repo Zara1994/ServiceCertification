@@ -1,30 +1,50 @@
 package com.example.demoServiceCertification.controllers;
 
 import com.example.demoServiceCertification.models.Service;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/service")
 public class ServiceController {
-    private Map<String, Service> services = new HashMap<>();
+    private List<Service> services = new ArrayList<>();
 
-    public ServiceController() {
-        services.put("1", new Service( "Service One", "Description for Service One", "1"));
+    @PostMapping
+    public Service createService(@RequestBody  @Valid Service service) {
+        service.setId(services.size() + 1);
+        services.add(service);
+        return service;
+    }
+
+    @GetMapping
+    public List<Service> getAllServices() {
+        return services;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Service> getService(@PathVariable String id) {
-        Service service = services.get(id);
-        if (service != null) {
-            return ResponseEntity.ok(service);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public Service getService(@PathVariable int id) {
+        return services.stream()
+                .filter(service -> Objects.equals(service.getId(), id))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    @PutMapping("/{id}")
+    public Service updateService(@PathVariable int id, @RequestBody Service service) {
+        Service existingService = getService(id);
+        existingService.setName(service.getName());
+        existingService.setDescription(service.getDescription());
+        existingService.setDocumentationLink(service.getDocumentationLink());
+        existingService.setSwaggerLink(service.getSwaggerLink());
+        return existingService;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteService(@PathVariable int id) {
+        services.removeIf(service -> Objects.equals(service.getId(), id));
     }
 }
